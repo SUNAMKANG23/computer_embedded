@@ -31,10 +31,17 @@ fn main() {
 
 
 fn save_output_to_sqlite(output: &str) -> Result<()> {
+    // Open a connection to the SQLite database
+    // ? at the end of this line means that the function will return an error if it fails
     let conn = Connection::open("command_output.db")?;
 
     // Create a table to store the command output
     // Note: In a real application, you might want to check if the table already exists
+
+    // Create the table
+    // in table , we are gonna have id and output and the id is going to be the primary key
+    // text not null means that the output cannot be empty
+    // id is going to be sequential and it will be the primary key
     conn.execute(
         "CREATE TABLE IF NOT EXISTS command_output (
                   id INTEGER PRIMARY KEY,
@@ -44,6 +51,8 @@ fn save_output_to_sqlite(output: &str) -> Result<()> {
     )?;
 
     // Insert the command output into the table
+    // put ouptu into the table as a string
+    // ? at the end of this line means that the function will return an error if it fails
     conn.execute(
         "INSERT INTO command_output (output) VALUES (?1)",
         params![output],
