@@ -3,14 +3,14 @@ use rusqlite::{params, Connection, Result};
 
 fn main() {
     /*
-    Command::new("ipconfig")
-        .output()
-        .expect("Failed to execute command");
-    
-    we just print out the output of the command as it is since it cant handle the utf-8 issue for some reason
+    * Command::new("ipconfig")
+    *    .output()
+    *    .expect("Failed to execute command");
+    *
+    * We just print out the output of the command as it is since it cant handle the utf-8 issue
     */
 
-    // Execute the command
+    // Execute the command with error handling
     let output = Command::new("ipconfig").output().expect("Failed to execute command");
     
     // Use lossy conversion to handle invalid UTF-8 sequences
@@ -19,10 +19,14 @@ fn main() {
         println!("Command executed successfully:\n{}", output_str);
         
         // Save the output to SQLite
+        // & that is before the output_str is a reference to the output_sting so we can pass it to the save_output_to_sqlite function
+        // if we dont use & it will be a copy of the output_str and we wont be able to use it in the save_output_to_sqlite function
         if let Err(e) = save_output_to_sqlite(&output_str) {
             eprintln!("Failed to save output to SQLite: {}", e);
     }   
     }
+    // .stderr is the stderr of the command
+      
     else {
         let error_str = String::from_utf8_lossy(&output.stderr);
         println!("Command failed to execute:\n{}", error_str);
